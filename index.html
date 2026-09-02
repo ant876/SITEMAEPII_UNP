@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="claro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DASHBOARD UNP</title>
+<link rel="icon" href="assets/unp-logo.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============ SIDEBAR (desktop) ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img class="brand-logo" src="assets/unp-logo.png" alt="Universidad Nacional de Piura">
+      <div class="brand-text">
+        <div class="brand-title-row">
+          <b>DASHBOARD <span class="accent">UNP</span></b>
+          <span class="ciclo-badge" id="cycleTag">CICLO —</span>
+        </div>
+        <span class="brand-tagline">Centro de organización académica</span>
+      </div>
+    </div>
+
+    <button class="profile-row" id="profileRow">
+      <span class="profile-avatar" id="profileAvatar">M</span>
+      <span class="profile-info">
+        <b id="profileNameLabel">Estudiante</b>
+        <span>Ver / editar perfil</span>
+      </span>
+      <span class="ic" data-icon="edit" data-icon-size="14"></span>
+    </button>
+
+    <nav class="nav-list" id="navList">
+      <div class="nav-item" data-view="dashboard"><span class="ic" data-icon="home"></span>Inicio</div>
+      <div class="nav-item" data-view="tareas"><span class="ic" data-icon="tasks"></span>Tareas</div>
+      <div class="nav-item" data-view="calendario"><span class="ic" data-icon="calendar"></span>Calendario</div>
+      <div class="nav-item" data-view="cursos"><span class="ic" data-icon="book"></span>Cursos</div>
+      <a class="nav-item" href="https://campusvirtual.unp.edu.pe/" target="_blank" rel="noopener"><span class="ic" data-icon="sparkle"></span>Campus Virtual</a>
+      <div class="nav-item" data-view="inbox"><span class="ic" data-icon="inbox"></span>Inbox</div>
+      <div class="nav-item" data-view="recursos"><span class="ic" data-icon="folder"></span>Recursos</div>
+      <a class="nav-item" href="https://intranet.unp.edu.pe/alumno/notas" target="_blank" rel="noopener"><span class="ic" data-icon="note"></span>Notas</a>
+      <div class="nav-item" data-view="productividad"><span class="ic" data-icon="target"></span>Exámenes y Eventos</div>
+      <div class="nav-item" data-view="configuracion"><span class="ic" data-icon="settings"></span>Configuración</div>
+    </nav>
+
+    <div class="sidebar-foot">
+      <span>local · v1</span>
+      <b id="todayMini">--/--</b>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- Mobile topbar -->
+    <div class="mobile-topbar">
+      <button class="brand" id="brandMobile" style="border:none;cursor:pointer;">
+        <img class="brand-logo" src="assets/unp-logo.png" alt="UNP">
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <b>DASHBOARD <span class="accent">UNP</span></b>
+          </div>
+          <span class="ciclo-badge" id="cycleTagMobile">CICLO —</span>
+        </div>
+      </button>
+      <div style="display:flex;gap:8px;">
+        <button class="icon-btn" id="themeToggleMobile"><span class="ic" data-icon="moon"></span></button>
+        <button class="icon-btn" data-view="configuracion"><span class="ic" data-icon="settings"></span></button>
+      </div>
+    </div>
+
+    <!-- Desktop topbar -->
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="viewTitle">Inicio</h1>
+        <div class="date-line" id="dateLine">—</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" title="Cambiar tema"><span class="ic" data-icon="moon"></span></button>
+        <button class="icon-btn" title="Notificaciones"><span class="ic" data-icon="bell"></span></button>
+        <button class="icon-btn" data-view="configuracion" title="Configuración"><span class="ic" data-icon="settings"></span></button>
+        <button class="btn-add" id="btnAdd"><span class="ic" data-icon="plus"></span><span>Agregar</span></button>
+      </div>
+    </header>
+
+    <div class="view" id="view"><!-- contenido dinámico --></div>
+  </main>
+</div>
+
+<!-- Botón flotante móvil -->
+<button class="btn-add" id="btnAddMobile"><span class="ic" data-icon="plus" data-icon-size="22"></span></button>
+
+<!-- Bottom nav (mobile) -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mnav-item" data-view="dashboard"><span class="ic" data-icon="home"></span>Inicio</div>
+  <div class="mnav-item" data-view="tareas"><span class="ic" data-icon="tasks"></span>Tareas</div>
+  <div class="mnav-item" data-view="calendario"><span class="ic" data-icon="calendar"></span>Calendario</div>
+  <div class="mnav-item" data-view="cursos"><span class="ic" data-icon="book"></span>Cursos</div>
+  <div class="mnav-item" data-view="inbox"><span class="ic" data-icon="inbox"></span>Inbox</div>
+</nav>
+
+<!-- ============ QUICK ADD: type chooser ============ -->
+<div class="overlay" id="overlayQuickAdd">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-head"><h3>¿Qué quieres agregar?</h3><button class="icon-btn" data-close><span class="ic" data-icon="x"></span></button></div>
+    <div class="qa-grid">
+      <div class="qa-opt" data-qa="tarea"><span class="qi" data-icon="tasks" data-icon-size="24"></span><span class="qt">Tarea</span></div>
+      <div class="qa-opt" data-qa="evento"><span class="qi" data-icon="calendar" data-icon-size="24"></span><span class="qt">Evento</span></div>
+      <div class="qa-opt" data-qa="examen"><span class="qi" data-icon="target" data-icon-size="24"></span><span class="qt">Examen</span></div>
+      <div class="qa-opt" data-qa="estudio"><span class="qi" data-icon="book" data-icon-size="24"></span><span class="qt">Estudio</span></div>
+      <div class="qa-opt" data-qa="inbox" style="grid-column:1 / -1;"><span class="qi" data-icon="note" data-icon-size="24"></span><span class="qt">Recordatorio rápido (Inbox)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FORM MODAL (genérico, reutilizado por tipo) ============ -->
+<div class="overlay" id="overlayForm">
+  <div class="modal">
+    <div class="modal-head"><h3 id="formTitle">Nuevo</h3><button class="icon-btn" data-close><span class="ic" data-icon="x"></span></button></div>
+    <div class="modal-body" id="formBody"><!-- inyectado por JS --></div>
+    <div class="modal-foot">
+      <button class="btn" data-close>Cancelar</button>
+      <button class="btn btn-primary" id="formSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============ SCRIPTS (orden importa: sin type=module para funcionar con file://) ============ -->
+<script src="js/icons.js"></script>
+<script src="js/store.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/bloques.js"></script>
+<script src="js/quickadd.js"></script>
+<script src="js/ui-notas.js"></script>
+<script src="js/ui-dashboard.js"></script>
+<script src="js/ui-tareas.js"></script>
+<script src="js/ui-calendario.js"></script>
+<script src="js/ui-cursos.js"></script>
+<script src="js/ui-horario.js"></script>
+<script src="js/ui-estudio.js"></script>
+<script src="js/ui-inbox.js"></script>
+<script src="js/ui-recursos.js"></script>
+<script src="js/ui-objetivos.js"></script>
+<script src="js/ui-productividad.js"></script>
+<script src="js/ui-configuracion.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
