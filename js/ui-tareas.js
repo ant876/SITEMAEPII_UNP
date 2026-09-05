@@ -34,7 +34,7 @@ const UITareas = (function () {
     const done = t.estado === "completada";
     const atrasada = !done && Utils.daysBetween(Utils.today(), t.fecha) < 0;
     return `
-      <div class="task-row ${done?"done":""}" data-id="${t.id}">
+      <div class="task-row ${done?"done":""}" data-id="${t.id}" data-open="${t.id}">
         <div class="check ${done?"on":""}" data-toggle="${t.id}">${done?Icons.get("check",12):""}</div>
         <div class="task-body">
           <div class="task-title">${Utils.esc(t.titulo)}</div>
@@ -85,11 +85,16 @@ const UITareas = (function () {
       Utils.toast(t.estado==="completada" ? "Marcada como pendiente" : "Tarea completada");
       App.refresh();
     }));
-    document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", ()=> QuickAdd.editTask(el.dataset.edit)));
-    document.querySelectorAll("[data-del]").forEach(el => el.addEventListener("click", ()=>{
+    document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", (e)=>{ e.stopPropagation(); QuickAdd.editTask(el.dataset.edit); }));
+    document.querySelectorAll("[data-del]").forEach(el => el.addEventListener("click", (e)=>{
+      e.stopPropagation();
       if (confirm("¿Eliminar esta tarea?")) { Store.remove("tasks", el.dataset.del); Utils.toast("Tarea eliminada"); App.refresh(); }
     }));
     document.querySelectorAll("[data-newof]").forEach(el => el.addEventListener("click", ()=> QuickAdd.newOfType(el.dataset.newof)));
+    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", (e)=>{
+      if (e.target.closest("[data-toggle]")) return;
+      UITaskDetail.open(el.dataset.open);
+    }));
   }
 
   return { render };

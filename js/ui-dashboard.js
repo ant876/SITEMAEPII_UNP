@@ -47,7 +47,7 @@ const UIDashboard = (function () {
     const c = t.courseId ? courseName(t.courseId) : "";
     const done = t.estado === "completada";
     return `
-      <div class="task-row ${done?"done":""}" data-id="${t.id}">
+      <div class="task-row ${done?"done":""}" data-id="${t.id}" data-open="${t.id}">
         <div class="check ${done?"on":""}" data-toggle="${t.id}">${done?Icons.get("check",12):""}</div>
         <div class="task-body">
           <div class="task-title">${Utils.esc(t.titulo)}</div>
@@ -89,14 +89,15 @@ const UIDashboard = (function () {
     const urg = urgentTasks();
     const prox = upcoming();
     const hoyPlan = paraHoy();
+    const sinPerfil = !s.nombre;
 
     document.getElementById("view").innerHTML = `
       <div class="greeting">
         <div>
-          <h1>Hola, ${Utils.esc(nombre)}</h1>
-          <div class="sub">${Utils.longDate(Utils.today())}</div>
+          <h1>${sinPerfil ? "Bienvenido a FII CONTROL" : "Hola, " + Utils.esc(nombre)}</h1>
+          <div class="sub">${sinPerfil ? "Completa tu perfil para empezar a organizar tu ciclo." : Utils.longDate(Utils.today())}</div>
         </div>
-        <div class="streak-chip">${Icons.get("flame",15)} ${streakDays()} días de racha</div>
+        ${sinPerfil ? `<button class="btn btn-primary btn-sm" id="btnCompleteProfile">${Icons.get("edit",13)} Completar perfil</button>` : ""}
       </div>
 
       <div class="kpi-row">
@@ -140,6 +141,7 @@ const UIDashboard = (function () {
 
     wireRows();
     UINotas.wire();
+    if (sinPerfil) document.getElementById("btnCompleteProfile").addEventListener("click", () => App.openProfileForm());
   }
 
   function emptyState(iconName, title, sub, qaType) {
@@ -149,18 +151,6 @@ const UIDashboard = (function () {
       <div class="em-sub">${sub}</div>
       <button class="btn btn-primary btn-sm" data-newof="${qaType}">${Icons.get("plus",13)} Agregar</button>
     </div>`;
-  }
-
-  function streakDays() {
-    // racha simple basada en días consecutivos con al menos una sesión de estudio o tarea completada
-    let streak = 0;
-    for (let i=0;i<60;i++){
-      const day = new Date(); day.setDate(day.getDate()-i);
-      const hit = Store.all("study").some(s=>Utils.isSameDay(s.fecha, day)) ||
-                  Store.all("tasks").some(t=>t.estado==="completada" && Utils.isSameDay(t.fecha, day));
-      if (hit) streak++; else if (i===0) continue; else break;
-    }
-    return streak;
   }
 
   function wireRows() {
@@ -179,6 +169,10 @@ const UIDashboard = (function () {
       if (confirm("¿Eliminar esta tarea?")) { Store.remove("tasks", el.dataset.del); Utils.toast("Tarea eliminada"); App.refresh(); }
     }));
     document.querySelectorAll("[data-newof]").forEach(el => el.addEventListener("click", ()=> QuickAdd.newOfType(el.dataset.newof)));
+    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", (e)=>{
+      if (e.target.closest("[data-toggle]")) return;
+      UITaskDetail.open(el.dataset.open);
+    }));
   }
 
   return { render, taskRowHTML, emptyState, pendingTasks, upcoming };

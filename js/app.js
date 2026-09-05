@@ -34,6 +34,15 @@ const App = (function () {
     Icons.hydrate(document.getElementById("view"));
     if (v.inNav) updateNavActive();
     updateHeader();
+    animateViewIn();
+  }
+
+  function animateViewIn() {
+    const el = document.getElementById("view");
+    el.classList.remove("view-enter");
+    // fuerza reflow para poder re-disparar la animación en cada render
+    void el.offsetWidth;
+    el.classList.add("view-enter");
   }
 
   function updateNavActive() {
@@ -55,6 +64,33 @@ const App = (function () {
     document.getElementById("cycleTagMobile").textContent = cicloTxt;
     document.getElementById("profileNameLabel").textContent = s.nombre || "Estudiante";
     document.getElementById("profileAvatar").textContent = firstName(s.nombre).charAt(0).toUpperCase() || "?";
+    updateNotifBadge();
+  }
+
+  // ---------- Notificaciones ----------
+  function urgentTasksCount() {
+    const now = Utils.today();
+    const oneHourMs = 60 * 60 * 1000;
+    return Store.all("tasks").filter(t => {
+      if (t.estado === "completada") return false;
+      const due = new Date(t.fecha);
+      return (due - now) <= oneHourMs;
+    }).length;
+  }
+
+  function updateNotifBadge() {
+    const count = urgentTasksCount();
+    [document.getElementById("notifBadge"), document.getElementById("notifBadgeMobile")].forEach(el => {
+      if (!el) return;
+      if (count > 0) { el.textContent = count > 9 ? "9+" : String(count); el.style.display = "flex"; }
+      else { el.style.display = "none"; }
+    });
+  }
+
+  function wireNotif() {
+    [document.getElementById("notifBtn"), document.getElementById("notifBtnMobile")].forEach(el => {
+      if (el) el.addEventListener("click", () => go("tareas"));
+    });
   }
 
   function wireNav() {
@@ -192,12 +228,13 @@ const App = (function () {
     wireNav();
     wireTheme();
     wireProfile();
+    wireNotif();
     const hash = location.hash.replace("#", "");
     current = VIEWS[hash] ? hash : "dashboard";
     refresh();
 
     // refresco ligero cada minuto para relojes/relativos si la app queda abierta
-    setInterval(() => { if (current === "dashboard") refresh(); }, 60000);
+    setInterval(() => { if (current === "dashboard") refresh(); updateNotifBadge(); }, 60000);
   }
 
   document.addEventListener("DOMContentLoaded", init);

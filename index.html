@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DASHBOARD UNP</title>
+<title>FII CONTROL</title>
 <link rel="icon" href="assets/unp-logo.png">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -17,7 +17,7 @@
       <img class="brand-logo" src="assets/unp-logo.png" alt="Universidad Nacional de Piura">
       <div class="brand-text">
         <div class="brand-title-row">
-          <b>DASHBOARD <span class="accent">UNP</span></b>
+          <b>FII <span class="accent">CONTROL</span></b>
           <span class="ciclo-badge" id="cycleTag">CICLO —</span>
         </div>
         <span class="brand-tagline">Centro de organización académica</span>
@@ -61,12 +61,13 @@
         <img class="brand-logo" src="assets/unp-logo.png" alt="UNP">
         <div class="brand-text">
           <div class="brand-title-row">
-            <b>DASHBOARD <span class="accent">UNP</span></b>
+            <b>FII <span class="accent">CONTROL</span></b>
           </div>
           <span class="ciclo-badge" id="cycleTagMobile">CICLO —</span>
         </div>
       </button>
       <div style="display:flex;gap:8px;">
+        <button class="icon-btn" id="notifBtnMobile" title="Notificaciones"><span class="ic" data-icon="bell"></span><span class="notif-badge" id="notifBadgeMobile" style="display:none;">0</span></button>
         <button class="icon-btn" id="themeToggleMobile"><span class="ic" data-icon="moon"></span></button>
         <button class="icon-btn" data-view="configuracion"><span class="ic" data-icon="settings"></span></button>
       </div>
@@ -80,7 +81,7 @@
       </div>
       <div class="topbar-right">
         <button class="icon-btn" id="themeToggle" title="Cambiar tema"><span class="ic" data-icon="moon"></span></button>
-        <button class="icon-btn" title="Notificaciones"><span class="ic" data-icon="bell"></span></button>
+        <button class="icon-btn" id="notifBtn" title="Notificaciones"><span class="ic" data-icon="bell"></span><span class="notif-badge" id="notifBadge" style="display:none;">0</span></button>
         <button class="icon-btn" data-view="configuracion" title="Configuración"><span class="ic" data-icon="settings"></span></button>
         <button class="btn-add" id="btnAdd"><span class="ic" data-icon="plus"></span><span>Agregar</span></button>
       </div>
@@ -95,11 +96,18 @@
 
 <!-- Bottom nav (mobile) -->
 <nav class="mobile-nav" id="mobileNav">
-  <div class="mnav-item" data-view="dashboard"><span class="ic" data-icon="home"></span>Inicio</div>
-  <div class="mnav-item" data-view="tareas"><span class="ic" data-icon="tasks"></span>Tareas</div>
-  <div class="mnav-item" data-view="calendario"><span class="ic" data-icon="calendar"></span>Calendario</div>
-  <div class="mnav-item" data-view="cursos"><span class="ic" data-icon="book"></span>Cursos</div>
-  <div class="mnav-item" data-view="inbox"><span class="ic" data-icon="inbox"></span>Inbox</div>
+  <div class="mnav-scroll">
+    <div class="mnav-item" data-view="dashboard"><span class="ic" data-icon="home"></span>Inicio</div>
+    <div class="mnav-item" data-view="tareas"><span class="ic" data-icon="tasks"></span>Tareas</div>
+    <div class="mnav-item" data-view="calendario"><span class="ic" data-icon="calendar"></span>Calendario</div>
+    <div class="mnav-item" data-view="cursos"><span class="ic" data-icon="book"></span>Cursos</div>
+    <a class="mnav-item" href="https://campusvirtual.unp.edu.pe/" target="_blank" rel="noopener"><span class="ic" data-icon="sparkle"></span>Campus</a>
+    <div class="mnav-item" data-view="inbox"><span class="ic" data-icon="inbox"></span>Inbox</div>
+    <div class="mnav-item" data-view="recursos"><span class="ic" data-icon="folder"></span>Recursos</div>
+    <a class="mnav-item" href="https://intranet.unp.edu.pe/alumno/notas" target="_blank" rel="noopener"><span class="ic" data-icon="note"></span>Notas</a>
+    <div class="mnav-item" data-view="productividad"><span class="ic" data-icon="target"></span>Exámenes</div>
+    <div class="mnav-item" data-view="configuracion"><span class="ic" data-icon="settings"></span>Ajustes</div>
+  </div>
 </nav>
 
 <!-- ============ QUICK ADD: type chooser ============ -->
@@ -136,7 +144,9 @@
 <script src="js/utils.js"></script>
 <script src="js/bloques.js"></script>
 <script src="js/quickadd.js"></script>
+<script src="js/ui-task-detail.js"></script>
 <script src="js/ui-notas.js"></script>
+<script src="js/ui-notas-curso.js"></script>
 <script src="js/ui-dashboard.js"></script>
 <script src="js/ui-tareas.js"></script>
 <script src="js/ui-calendario.js"></script>

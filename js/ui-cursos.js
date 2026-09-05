@@ -4,6 +4,7 @@
    ============================================================ */
 const UICursos = (function () {
   let schedRows = []; // estado temporal del editor de horario mientras el formulario está abierto
+  let activeDetailTab = "info"; // recuerda la pestaña activa del detalle entre re-renders (ej. tras editar una nota)
 
   function activitiesOf(courseId) {
     const ev = Store.all("events").filter(e => e.courseId === courseId);
@@ -48,6 +49,8 @@ const UICursos = (function () {
     const drive = findQuickLink(res, "drive");
     const classroom = findQuickLink(res, "classroom");
     const ink = Utils.contrastColor(c.color);
+    const tipoLabel = c.tipo === "electivo" ? "E" : "O";
+    const tipoTitle = c.tipo === "electivo" ? "Electivo" : "Obligatorio";
 
     return `
       <div class="modal cd-modal">
@@ -57,6 +60,7 @@ const UICursos = (function () {
               ${c.codigo ? `<span class="cd-badge" style="color:${ink};border-color:${ink}55;">${Utils.esc(c.codigo)}</span>` : ""}
               <span class="cd-badge" style="color:${ink};border-color:${ink}55;">${Icons.get("book",11)} ${c.creditos} Créditos</span>
               ${c.seccion ? `<span class="cd-badge" style="color:${ink};border-color:${ink}55;">Sección ${Utils.esc(c.seccion)}</span>` : ""}
+              <span class="cd-badge" title="${tipoTitle}" style="color:${ink};border-color:${ink}55;">${tipoLabel} · ${tipoTitle}</span>
             </div>
             <div style="display:flex;gap:6px;">
               ${drive ? `<a class="cd-quick-link" href="${Utils.esc(drive.url)}" target="_blank" rel="noopener" style="color:${ink};border-color:${ink}55;">${Icons.get("folder",13)} Drive</a>` : ""}
@@ -66,9 +70,13 @@ const UICursos = (function () {
             </div>
           </div>
           <h3 style="color:${ink};margin-top:10px;">${Utils.esc(c.nombre)}</h3>
+          <div class="cd-tabs">
+            <button class="cd-tab ${activeDetailTab==="info"?"active":""}" data-tab="info">Información</button>
+            <button class="cd-tab ${activeDetailTab==="notas"?"active":""}" data-tab="notas">Notas</button>
+          </div>
         </div>
 
-        <div class="modal-body">
+        <div class="modal-body" id="cdPanelInfo" style="${activeDetailTab!=="info"?"display:none;":""}">
           <div class="cd-info-row">
             <div class="cd-info-item">
               <span class="cd-info-ic">${Icons.get("user",14)}</span>
@@ -134,6 +142,10 @@ const UICursos = (function () {
             </div>
           </div>
         </div>
+
+        <div class="modal-body" id="cdPanelNotas" style="${activeDetailTab!=="notas"?"display:none;":""}">
+          ${UICursoNotas.panelHTML(c)}
+        </div>
       </div>`;
   }
 
@@ -149,7 +161,7 @@ const UICursos = (function () {
       </div>
     `;
 
-    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", ()=> openDetail(el.dataset.open)));
+    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", ()=> { activeDetailTab = "info"; openDetail(el.dataset.open); }));
     document.getElementById("btnNewCourse").addEventListener("click", ()=> openCourseForm(null));
     document.getElementById("btnShowSchedule").addEventListener("click", ()=> App.go("horario"));
   }
@@ -164,6 +176,16 @@ const UICursos = (function () {
     const addResBtn = ov.querySelector("#btnAddResourceInline");
     if (addResBtn) addResBtn.addEventListener("click", () => UIRecursos.openResourceFormFor(c.id, () => openDetail(c.id)));
     ov.addEventListener("click", function handler(e){ if (e.target===ov){ ov.classList.remove("open"); rebuildFormModal(); ov.removeEventListener("click", handler);} });
+
+    ov.querySelectorAll("[data-tab]").forEach(tabBtn => {
+      tabBtn.addEventListener("click", () => {
+        activeDetailTab = tabBtn.dataset.tab;
+        ov.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("active", b === tabBtn));
+        ov.querySelector("#cdPanelInfo").style.display = activeDetailTab === "info" ? "" : "none";
+        ov.querySelector("#cdPanelNotas").style.display = activeDetailTab === "notas" ? "" : "none";
+      });
+    });
+    UICursoNotas.wire(c.id, () => setTimeout(() => openDetail(c.id), 0));
   }
 
   function rebuildFormModal() {
@@ -203,7 +225,15 @@ const UICursos = (function () {
           </select>
         </div>
       </div>
-      <div class="field"><label>Aula</label><input id="fAula" value="${Utils.esc(c?.aula||"")}" placeholder="Ej. Pab. A - 204"></div>
+      <div class="field-row">
+        <div class="field"><label>Aula</label><input id="fAula" value="${Utils.esc(c?.aula||"")}" placeholder="Ej. Pab. A - 204"></div>
+        <div class="field"><label>Tipo</label>
+          <select id="fTipoCurso">
+            <option value="obligatorio" ${(c?.tipo||"obligatorio")==="obligatorio"?"selected":""}>Obligatorio</option>
+            <option value="electivo" ${c?.tipo==="electivo"?"selected":""}>Electivo</option>
+          </select>
+        </div>
+      </div>
       <div class="field"><label>Color</label><input id="fColor" type="color" value="${c?.color||"#2455A4"}"></div>
 
       <div class="field">
@@ -232,6 +262,7 @@ const UICursos = (function () {
         seccion: document.getElementById("fSeccion").value.trim(),
         creditos: Number(document.getElementById("fCred").value)||3,
         aula: document.getElementById("fAula").value.trim(),
+        tipo: document.getElementById("fTipoCurso").value,
         color: document.getElementById("fColor").value,
         horario: schedRows,
         descripcion: document.getElementById("fDescC").value.trim(),

@@ -28,7 +28,7 @@ const UIProductividad = (function () {
     const atrasado = d < 0;
     const c = e.courseId ? courseName(e.courseId) : "";
     return `
-      <div class="task-row" data-id="${e.id}" style="border-left:3px solid ${e.courseId ? courseColor(e.courseId) : "var(--border)"};">
+      <div class="task-row" data-id="${e.id}" data-open="${e.id}" style="border-left:3px solid ${e.courseId ? courseColor(e.courseId) : "var(--border)"};">
         <div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;" class="${meta.cls}"></div>
         <div class="task-body">
           <div class="task-title">${isExamen ? "<strong>" : ""}${Utils.esc(e.titulo)}${isExamen ? "</strong>" : ""}</div>
@@ -62,11 +62,13 @@ const UIProductividad = (function () {
       </div>
     `;
 
-    document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", () => QuickAdd.editEvent(el.dataset.edit)));
-    document.querySelectorAll("[data-del]").forEach(el => el.addEventListener("click", () => {
+    document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", (e) => { e.stopPropagation(); QuickAdd.editEvent(el.dataset.edit); }));
+    document.querySelectorAll("[data-del]").forEach(el => el.addEventListener("click", (e) => {
+      e.stopPropagation();
       if (confirm("¿Eliminar este elemento?")) { Store.remove("events", el.dataset.del); Utils.toast("Eliminado"); App.refresh(); }
     }));
     document.querySelectorAll("[data-newof]").forEach(el => el.addEventListener("click", () => QuickAdd.newOfType(el.dataset.newof)));
+    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", () => QuickAdd.editEvent(el.dataset.open)));
   }
 
   return { render };

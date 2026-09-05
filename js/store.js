@@ -7,10 +7,10 @@ const Store = (function () {
 
   const EMPTY_DB = {
     settings: {
-      nombre: "Marck",
+      nombre: "",
       codigo: "",
       cicloRomano: "",
-      ciclo: "2026-I",
+      ciclo: "",
       escuela: "",
       creditosAprobados: 0,
       promedios: [], // [{ id, ciclo, promedio }]
@@ -23,7 +23,13 @@ const Store = (function () {
     study: [],
     inbox: [],
     notes: [],    // notas rápidas del dashboard
-    objectives: [],
+    objectives: [
+      { id: "o1", titulo: "No tener tareas atrasadas", meta: 1, progreso: 0, tipo: "boolean" },
+      { id: "o2", titulo: "Estudiar 15 horas por semana", meta: 15, progreso: 0, tipo: "horas" },
+      { id: "o3", titulo: "Entregar trabajos antes del límite", meta: 1, progreso: 0, tipo: "boolean" },
+      { id: "o4", titulo: "Preparar exámenes con anticipación", meta: 1, progreso: 0, tipo: "boolean" },
+      { id: "o5", titulo: "Mantener una rutina constante", meta: 1, progreso: 0, tipo: "boolean" },
+    ],
     resources: [], // { id, courseId, label, url }
   };
 
@@ -50,7 +56,7 @@ const Store = (function () {
 
   let db = load();
   if (!db) {
-    db = seedDemoData();
+    db = JSON.parse(JSON.stringify(EMPTY_DB));
     save(db);
   } else {
     // migración suave: asegura que colecciones/campos nuevos existan sin perder datos existentes
@@ -63,6 +69,8 @@ const Store = (function () {
     (db.courses || []).forEach(c => {
       if (c.seccion === undefined) c.seccion = "";
       if (c.codigo === undefined) c.codigo = "";
+      if (c.tipo === undefined) c.tipo = "obligatorio";
+      if (!c.rubros) c.rubros = [];
       if (c.nombre) c.nombre = c.nombre.toUpperCase();
       if (c.profesor) c.profesor = c.profesor.toUpperCase();
     });
