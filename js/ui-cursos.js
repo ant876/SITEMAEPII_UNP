@@ -123,7 +123,7 @@ const UICursos = (function () {
               <div class="section-head" style="margin-top:0;"><h2>${Icons.get("tasks",12)} Tareas del curso</h2><span class="hint">${tasksAll.length}</span></div>
               <div class="cd-task-list">
                 ${tasksAll.length ? tasksAll.map(t => `
-                  <div class="cd-task-item">
+                  <div class="cd-task-item" data-opentask="${t.id}">
                     <div class="cd-task-top">
                       <span class="pill ${t.estado==='completada' ? 'pill-baja' : 'pill-media'}">${t.estado==='completada' ? 'Completada' : 'Pendiente'}</span>
                       <span class="cd-task-date">${Utils.shortDate(t.fecha)}</span>
@@ -134,7 +134,7 @@ const UICursos = (function () {
 
               <div class="section-head"><h2>${Icons.get("target",12)} Exámenes y evaluaciones</h2></div>
               ${examenes.length ? examenes.map(e => `
-                <div class="cd-exam-card">
+                <div class="cd-exam-card" data-openexam="${e.id}">
                   <b>${Utils.esc(e.titulo)}</b>
                   <div class="cd-exam-meta">${Utils.shortDate(e.fecha)} · ${Utils.to12h(e.horaInicio)}</div>
                   ${e.ubicacion ? `<div class="cd-exam-meta">${Utils.esc(e.ubicacion)}</div>` : ""}
@@ -175,6 +175,8 @@ const UICursos = (function () {
     ov.querySelector("[data-editcourse]").addEventListener("click", ()=> openCourseForm(c.id));
     const addResBtn = ov.querySelector("#btnAddResourceInline");
     if (addResBtn) addResBtn.addEventListener("click", () => UIRecursos.openResourceFormFor(c.id, () => openDetail(c.id)));
+    ov.querySelectorAll("[data-opentask]").forEach(el => el.addEventListener("click", () => UITaskDetail.open(el.dataset.opentask)));
+    ov.querySelectorAll("[data-openexam]").forEach(el => el.addEventListener("click", () => UIEventDetail.open(el.dataset.openexam)));
     ov.addEventListener("click", function handler(e){ if (e.target===ov){ ov.classList.remove("open"); rebuildFormModal(); ov.removeEventListener("click", handler);} });
 
     ov.querySelectorAll("[data-tab]").forEach(tabBtn => {

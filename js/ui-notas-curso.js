@@ -83,6 +83,7 @@ const UICursoNotas = (function () {
         <div class="rubro-peso-wrap"><input id="newRubroPeso" type="number" min="0" max="100" placeholder="Peso"><span>%</span></div>
         <button class="btn btn-primary btn-sm" id="btnAddRubro">${Icons.get("plus",12)} Agregar rubro</button>
       </div>
+      ${rubros.length ? `<button class="btn btn-primary" id="btnConfirmNotas" style="width:100%;margin-top:14px;">${Icons.get("check",13)} Confirmar cambios</button>` : ""}
     `;
   }
 
@@ -108,11 +109,18 @@ const UICursoNotas = (function () {
           });
         });
         card.querySelectorAll("[data-rmnota]").forEach(btn => {
-          btn.addEventListener("click", () => { const ni = Number(btn.dataset.rmnota); save(rs => { rs[i].notas.splice(ni,1); }); });
+          btn.addEventListener("click", () => {
+            const ni = Number(btn.dataset.rmnota);
+            const removedValue = Store.get("courses", courseId).rubros[i].notas[ni];
+            save(rs => { rs[i].notas.splice(ni,1); });
+            Utils.showUndo("Nota eliminada", () => save(rs => { rs[i].notas.splice(ni, 0, removedValue); }));
+          });
         });
         card.querySelector("[data-addnota]").addEventListener("click", () => save(rs => { rs[i].notas.push(""); }));
         card.querySelector("[data-rmrubro]").addEventListener("click", () => {
-          if (confirm("¿Eliminar este rubro y sus notas?")) save(rs => { rs.splice(i,1); });
+          const removedRubro = JSON.parse(JSON.stringify(Store.get("courses", courseId).rubros[i]));
+          save(rs => { rs.splice(i,1); });
+          Utils.showUndo("Rubro eliminado", () => save(rs => { rs.splice(i, 0, removedRubro); }));
         });
       });
     }
@@ -124,6 +132,9 @@ const UICursoNotas = (function () {
       if (!nombre) return Utils.toast("Ponle un nombre al rubro");
       save(rs => { rs.push({ nombre, peso, notas: [] }); });
     });
+
+    const btnConfirm = document.getElementById("btnConfirmNotas");
+    if (btnConfirm) btnConfirm.addEventListener("click", () => Utils.toast("Notas guardadas"));
   }
 
   return { panelHTML, wire, finalWeighted, tierOf };

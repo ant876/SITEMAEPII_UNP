@@ -101,6 +101,24 @@ const Utils = (function () {
     el._t = setTimeout(() => el.classList.remove("show"), 2200);
   }
 
+  let undoTimer = null;
+  function showUndo(message, onUndo) {
+    const el = document.getElementById("undoToast");
+    if (!el) return;
+    clearTimeout(undoTimer);
+    document.getElementById("undoToastMsg").textContent = message;
+    const oldBtn = document.getElementById("undoToastBtn");
+    const btn = oldBtn.cloneNode(true); // limpia listeners previos
+    oldBtn.parentNode.replaceChild(btn, oldBtn);
+    btn.addEventListener("click", () => {
+      clearTimeout(undoTimer);
+      el.classList.remove("show");
+      onUndo();
+    });
+    el.classList.add("show");
+    undoTimer = setTimeout(() => el.classList.remove("show"), 2000);
+  }
+
   const CAT_META = {
     clase:      { label: "Clase",       cls: "cat-clase" },
     examen:     { label: "Examen",      cls: "cat-examen" },
@@ -115,6 +133,6 @@ const Utils = (function () {
     DOW, DOW_SHORT, MONTHS, CAT_META,
     startOfDay, isSameDay, daysBetween, today,
     longDate, shortDate, dowShort, timeHM, to12h, relativeDay,
-    minutesToLabel, priorityScore, esc, contrastColor, toast,
+    minutesToLabel, priorityScore, esc, contrastColor, toast, showUndo,
   };
 })();

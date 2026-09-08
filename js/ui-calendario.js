@@ -73,7 +73,7 @@ const UICalendario = (function () {
     const c = item.ref.courseId ? courseName(item.ref.courseId) : "";
     const ubic = isTask ? "" : (item.ref.ubicacion || (isStudy ? "" : ""));
     return `
-      <div class="cal-item-card ${meta.cls}">
+      <div class="cal-item-card ${meta.cls}" data-openitem="${item.ref.id}" data-kind="${item.kind}">
         <div class="cal-item-top">
           <span class="cal-item-badge ${meta.cls}-soft"><span class="dot ${meta.cls}"></span>${meta.label.toUpperCase()}</span>
           ${timeRange ? `<span class="cal-item-time">${Icons.get("clock",11)} ${Utils.to12h(timeRange.split(" – ")[0])}${timeRange.includes(" – ") ? " – " + Utils.to12h(timeRange.split(" – ")[1]) : ""}</span>` : ""}
@@ -148,6 +148,12 @@ const UICalendario = (function () {
       render();
     }));
     document.getElementById("btnAddEventDay").addEventListener("click", ()=> QuickAdd.newOnDate("evento", selected));
+    document.querySelectorAll("[data-openitem]").forEach(el => el.addEventListener("click", ()=>{
+      const kind = el.dataset.kind;
+      if (kind === "tarea") UITaskDetail.open(el.dataset.openitem);
+      else if (kind === "estudio") QuickAdd.editStudy(el.dataset.openitem);
+      else UIEventDetail.open(el.dataset.openitem);
+    }));
   }
 
   return { render };

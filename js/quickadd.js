@@ -144,8 +144,9 @@ const QuickAdd = (function () {
       </div>
       <div class="field-row">
         <div class="field"><label>Hora fin</label><input type="time" id="fHoraFin" value="${e.horaFin || "11:00"}"></div>
-        <div class="field"><label>Ubicación</label><input id="fUbic" value="${Utils.esc(e.ubicacion||"")}" placeholder="Aula / link"></div>
+        <div class="field"><label>Ubicación</label><input id="fUbic" value="${Utils.esc(e.ubicacion||"")}" placeholder="Ej. Aula 204"></div>
       </div>
+      <div class="field"><label>Enlace (opcional)</label><input id="fEnlace" value="${Utils.esc(e.enlace||"")}" placeholder="Ej. https://meet.google.com/..."></div>
       <div class="field"><label>${isExam ? "Temas a evaluar" : "Descripción"}</label><textarea id="fDesc" placeholder="${isExam?"Derivadas, aplicaciones...":"Detalles..."}">${Utils.esc(e.descripcion||"")}</textarea></div>
       <div class="field"><label>Repetición</label>
         <select id="fRepite">
@@ -168,6 +169,7 @@ const QuickAdd = (function () {
         horaInicio: horaIni,
         horaFin: document.getElementById("fHoraFin").value || horaIni,
         ubicacion: document.getElementById("fUbic").value.trim(),
+        enlace: document.getElementById("fEnlace").value.trim(),
         descripcion: document.getElementById("fDesc").value.trim(),
         repite: document.getElementById("fRepite").value,
       };

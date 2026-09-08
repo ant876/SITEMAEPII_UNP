@@ -70,7 +70,7 @@ const UIDashboard = (function () {
     const title = item.ref.titulo;
     const c = item.ref.courseId ? courseName(item.ref.courseId) : "";
     return `
-      <div class="tl-item">
+      <div class="tl-item" data-openitem="${item.ref.id}" data-kind="${item.kind}">
         <div class="tl-date">${Utils.relativeDay(item.ref.fecha)}</div>
         <div class="tl-dot ${meta.cls}"></div>
         <div class="tl-body">
@@ -111,7 +111,7 @@ const UIDashboard = (function () {
           <div class="kpi-main">${pend.length} pendientes</div>
           <div class="kpi-sub">${urg.length} urgente${urg.length===1?"":"s"}</div>
         </div>
-        <div class="kpi k-proximo">
+        <div class="kpi k-proximo ${prox[0]?"kpi-clickable":""}" ${prox[0]?`data-openitem="${prox[0].ref.id}" data-kind="${prox[0].kind}"`:""}>
           <div class="kpi-label">${Icons.get("calendar",13)} Próximo</div>
           <div class="kpi-main">${prox[0] ? Utils.esc(prox[0].ref.titulo) : "Nada por ahora"}</div>
           <div class="kpi-sub">${prox[0] ? Utils.relativeDay(prox[0].ref.fecha) : "Todo tranquilo"}</div>
@@ -172,6 +172,10 @@ const UIDashboard = (function () {
     document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", (e)=>{
       if (e.target.closest("[data-toggle]")) return;
       UITaskDetail.open(el.dataset.open);
+    }));
+    document.querySelectorAll("[data-openitem]").forEach(el => el.addEventListener("click", ()=>{
+      if (el.dataset.kind === "evento") UIEventDetail.open(el.dataset.openitem);
+      else UITaskDetail.open(el.dataset.openitem);
     }));
   }
 

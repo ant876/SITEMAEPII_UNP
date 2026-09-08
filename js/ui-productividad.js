@@ -68,7 +68,7 @@ const UIProductividad = (function () {
       if (confirm("¿Eliminar este elemento?")) { Store.remove("events", el.dataset.del); Utils.toast("Eliminado"); App.refresh(); }
     }));
     document.querySelectorAll("[data-newof]").forEach(el => el.addEventListener("click", () => QuickAdd.newOfType(el.dataset.newof)));
-    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", () => QuickAdd.editEvent(el.dataset.open)));
+    document.querySelectorAll("[data-open]").forEach(el => el.addEventListener("click", () => UIEventDetail.open(el.dataset.open)));
   }
 
   return { render };
